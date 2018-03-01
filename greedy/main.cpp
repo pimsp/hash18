@@ -68,7 +68,7 @@ void run()
 		if (pick < 0) continue;
 
 		carrides[pick].pb(i);
-		timeAvailable[pick] = max(rides[i].time.x, timeAvailable[i] + diff) + rides[i].d;
+		timeAvailable[pick] = max(rides[i].time.x, timeAvailable[pick] + NYdist(carPos[pick], rides[i].fr)) + rides[i].d;
 		carPos[pick] = rides[i].to;
 	}
 
