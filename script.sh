@@ -1,5 +1,5 @@
-g++ -std=c++17 -O2 $1
-g++ -std=c++17 -O2 analysis/score.cpp -o calc_score
+g++ -std=c++17 $1
+#g++ -std=c++17 -O2 analysis/score.cpp -o calc_score
 echo "A Example";
 ./a.out < inputs/a_example.in > outputs/a.out;
 ./calc_score outputs/a.out < inputs/a_example.in

@@ -48,7 +48,11 @@ void run()
 	}
 
 	sort(rides, rides + N, [] (ride_t a, ride_t b) -> bool {
-		return a.time < b.time;
+
+		double weightA = 0.8 * a.time.x + a.d;
+		double weightB = 0.8 * b.time.x + b.d;
+
+		return weightA < weightB;
 	});
 
 	vi carUse(F, 0);
@@ -56,6 +60,7 @@ void run()
 	REP(i, N) {
 		vi opts;
 		int bestWait = 1e9;
+
 		REP(j, F) {
 			// check if we can match this car with this ride.
 			int ddd = NYdist(carPos[j], rides[i].fr);
