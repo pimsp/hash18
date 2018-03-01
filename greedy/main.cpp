@@ -54,18 +54,17 @@ void run()
 	vi timeAvailable(F, 0);
 	vii carPos(F, ii());
 	REP(i, N) {
-		int pick = -1;
-		int diff = -1;
+		vi opts;
 		REP(j, F) {
 			// check if we can match this car with this ride.
-			diff = NYdist(carPos[j], rides[i].fr);
-			int tAtStart = timeAvailable[j] + diff;
+			int tAtStart = timeAvailable[j] + NYdist(carPos[j], rides[i].fr);
 			if (tAtStart <= rides[i].time.y) {
-				pick = j;
-				break;
+				opts.pb(j);
 			}
 		}
-		if (pick < 0) continue;
+		if (opts.empty()) continue;
+
+		int pick = opts[rand() % opts.size()];
 
 		carrides[pick].pb(i);
 		timeAvailable[pick] = max(rides[i].time.x, timeAvailable[pick] + NYdist(carPos[pick], rides[i].fr)) + rides[i].d;
@@ -81,6 +80,7 @@ void run()
 
 int main()
 {
+	srand(time(NULL));
 	run();
 	return 0;
 }
