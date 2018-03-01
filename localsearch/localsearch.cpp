@@ -25,17 +25,50 @@ struct ride_t
 {
 	// time.x: start time, time.y: end time
 	ii fr, to, time;
-	int d, idx; // distance
+	int d, idx; // distance, index
+	bool used;
 };
 
 int R, C, F, N, B, T;
 ride_t rides[MAXRIDES];
 int invidx[MAXRIDES];
-vi carrides[MAXCARS];
+vii carrides[MAXCARS]; // (ride, endtime)
 
 inline static int NYdist(ii a, ii b)
 {
 	return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+void TryOptimise()
+{
+	REP(i, N) {
+		if (rides[i].used) continue;
+		REP(j, F) {
+			if (rides[i].used) break;
+			int maxk = (int)carrides[j].size();
+			REP(k, maxk) {
+				// try to replace carrides[j][k] with i (which happens to be not so very helpful (at all))
+				int oldtstart, newtstart;
+				int score = NYdist(rides[i].fr, rides[i].to) - NYdist(rides[carrides[j][k].x].fr, rides[carrides[j][k].x].to);
+				if(k==0){
+					newtstart = NYdist(make_pair(0,0), rides[i               ].fr);
+					oldtstart = NYdist(make_pair(0,0), rides[carrides[j][k].x].fr);
+				} else {
+					newtstart = carrides[j][k-1].y + NYdist(rides[carrides[j][k-1].x].to, rides[i               ].fr);
+					oldtstart = carrides[j][k-1].y + NYdist(rides[carrides[j][k-1].x].to, rides[carrides[j][k].x].fr);
+				}
+				if(newtstart <= rides[i               ].time.x) score += B;
+				if(oldtstart <= rides[carrides[j][k].x].time.x) score -= B;
+				if (score < 0) continue;
+				if(newtstart + rides[i].d > rides[i].time.y) continue;
+				
+				rides[carrides[j][k].x].used = false;
+				carrides[j][k].x = i;
+				carrides[j][k].y = newtstart + rides[i].d;
+				rides[carrides[j][k].x].used = true;
+			}
+		}
+	}
 }
 
 void run()
@@ -56,17 +89,26 @@ void run()
 	}
 	
 	REP(i, F) {
-		int a, M;
+		int a, M, time;
+		time = 0;
+		ii loc = make_pair(0,0);
 		scanf("%d", &M);
 		REP(j, M){
 			scanf("%d", &a);
-			carrides[i].eb(invidx[a]);
+			time += NYdist(loc, rides[invidx[a]].fr);
+			if (time < rides[invidx[a]].time.x) time = rides[invidx[a]].time.x;
+			time += rides[invidx[a]].d;
+			loc = rides[invidx[a]].to;
+			carrides[i].eb(invidx[a], time);
+			rides[invidx[a]].used = true;
 		}
 	}
 	
+	TryOptimise();
+	
 	REP(i, F) {
 		printf("%d", (int) carrides[i].size());
-		for (int j : carrides[i]) printf(" %d", rides[j].idx);
+		for (ii j : carrides[i]) printf(" %d", rides[j.x].idx);
 		printf("\n");
 	}
 }
