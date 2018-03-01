@@ -51,15 +51,22 @@ void run()
 		return a.time < b.time;
 	});
 
-	vi timeAvailable(F, 0);
+	vi carUse(F, 0);
 	vii carPos(F, ii());
 	REP(i, N) {
 		vi opts;
+		int bestWait = 1e9;
 		REP(j, F) {
 			// check if we can match this car with this ride.
-			int tAtStart = timeAvailable[j] + NYdist(carPos[j], rides[i].fr);
+			int ddd = NYdist(carPos[j], rides[i].fr);
+			int tAtStart = carUse[j] + ddd;
+			int wait = max(ddd, rides[i].time.x - carUse[j]);
 			if (tAtStart <= rides[i].time.y) {
-				opts.pb(j);
+				if (wait < bestWait) {
+					bestWait = wait;
+					opts.clear();
+				}
+				if (wait == bestWait) opts.pb(j);
 			}
 		}
 		if (opts.empty()) continue;
@@ -67,7 +74,7 @@ void run()
 		int pick = opts[rand() % opts.size()];
 
 		carrides[pick].pb(i);
-		timeAvailable[pick] = max(rides[i].time.x, timeAvailable[pick] + NYdist(carPos[pick], rides[i].fr)) + rides[i].d;
+		carUse[pick] = max(rides[i].time.x, carUse[pick] + NYdist(carPos[pick], rides[i].fr)) + rides[i].d;
 		carPos[pick] = rides[i].to;
 	}
 
