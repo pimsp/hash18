@@ -30,6 +30,7 @@ struct ride_t
 
 int R, C, F, N, B, T;
 ride_t rides[MAXRIDES];
+int invidx[MAXRIDES];
 vi carrides[MAXCARS];
 
 inline static int NYdist(ii a, ii b)
@@ -50,13 +51,16 @@ void run()
 	sort(rides, rides + N, [] (ride_t a, ride_t b) -> bool {
 		return a.time < b.time;
 	});
+	REP(i, N){
+		invidx[rides[i].idx]=i;
+	}
 	
 	REP(i, F) {
 		int a, M;
 		scanf("%d", &M);
 		REP(j, M){
 			scanf("%d", &a);
-			carrides[i].eb(a - 1);
+			carrides[i].eb(invidx[a]);
 		}
 	}
 	
