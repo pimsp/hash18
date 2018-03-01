@@ -31,6 +31,7 @@ struct ride_t
 int R, C, F, N, B, T;
 ride_t rides[MAXRIDES];
 vi carrides[MAXCARS];
+ii center;
 
 int bestScore = 0, bestCutoff = -1;
 vi bestSol[MAXCARS];
@@ -69,26 +70,31 @@ ll calculate_score()
 
 void run()
 {
+	ll totX, totY;
 	scanf("%d %d %d %d %d %d", &R, &C, &F, &N, &B, &T);
 	REP(i, N) {
 		scanf("%d %d %d %d %d %d", &rides[i].fr.x, &rides[i].fr.y, &rides[i].to.x, &rides[i].to.y, &rides[i].time.x, &rides[i].time.y);
 		rides[i].d = NYdist(rides[i].fr, rides[i].to);
 		rides[i].time.y -= rides[i].d;
 		rides[i].idx = i;
+		totX += rides[i].fr.x;
+		totY += rides[i].fr.y;
 	}
+	center.x = (int)(totX / N);
+	center.y = (int)(totY / N);
 
 	sort(rides, rides + N, [] (ride_t a, ride_t b) -> bool {
 		return a.time < b.time;
 	});
 
-	for (int cutoff = 5000; cutoff < 10000; cutoff += 100) {
+	for (int cutoff = 5000; cutoff < 7000; cutoff += 5) {
 		REP(j, F) carrides[j].clear();
 
 		vi carUse(F, 0);
 		vii carPos(F, ii());
 		REP(i, N) {
 
-			if (rides[i].d >= cutoff) continue;
+			if (NYdist(center, rides[i].to) >= cutoff) continue;
 
 			vi opts;
 			int bestWait = 1e9;
