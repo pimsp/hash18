@@ -40,12 +40,8 @@ inline static int NYdist(ii a, ii b)
 void run()
 {
 	scanf("%d %d %d %d %d %d", &R, &C, &F, &N, &B, &T);
-	// cin >> R >> C >> F >> N >> B >> T;
 	REP(i, N) {
 		scanf("%d %d %d %d %d %d", &rides[i].fr.x, &rides[i].fr.y, &rides[i].to.x, &rides[i].to.y, &rides[i].time.x, &rides[i].time.y);
-		// cin >> rides[i].fr.x >> rides[i].fr.y;
-		// cin >> rides[i].to.x >> rides[i].to.y;
-		// cin >> rides[i].time.x >> rides[i].time.y;
 		rides[i].d = NYdist(rides[i].fr, rides[i].to);
 		rides[i].time.y -= rides[i].d;
 		rides[i].idx = i;
@@ -72,7 +68,7 @@ void run()
 		if (pick < 0) continue;
 
 		carrides[pick].pb(i);
-		timeAvailable[pick] = min(rides[i].time.x, timeAvailable[i] + diff) + rides[i].d;
+		timeAvailable[pick] = max(rides[i].time.x, timeAvailable[i] + diff) + rides[i].d;
 		carPos[pick] = rides[i].to;
 	}
 
